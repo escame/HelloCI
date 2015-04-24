@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloCI.Web", "src\app\HelloCI.Web\HelloCI.Web.csproj", "{CBB55288-A84F-4EE9-BBC4-D700448A0CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HelloCI.UnitTests", "src\test\HelloCI.UnitTests\HelloCI.UnitTests.csproj", "{6C05EE11-34AC-4DC3-BFF0-3E5F44661C55}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A3BBC874-FAE1-4868-A338-30A042A43197}"
+	ProjectSection(SolutionItems) = preProject
+		HelloCI.build.ps1 = HelloCI.build.ps1
+		nuget.config = nuget.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CBB55288-A84F-4EE9-BBC4-D700448A0CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CBB55288-A84F-4EE9-BBC4-D700448A0CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CBB55288-A84F-4EE9-BBC4-D700448A0CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CBB55288-A84F-4EE9-BBC4-D700448A0CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6C05EE11-34AC-4DC3-BFF0-3E5F44661C55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6C05EE11-34AC-4DC3-BFF0-3E5F44661C55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6C05EE11-34AC-4DC3-BFF0-3E5F44661C55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6C05EE11-34AC-4DC3-BFF0-3E5F44661C55}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
