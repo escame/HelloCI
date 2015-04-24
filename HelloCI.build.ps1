@@ -23,10 +23,11 @@ properties {
 	$ProcessIIS = "iisexpress"
 
     # tools
-    # change testExecutable as needed, defaults to mstest
-    $testExecutable = "C:\Program Files (x86)\Microsoft Visual Studio 11.0\Common7\IDE\mstest.exe"
-    $nuget = "$sourceDir\packages\NuGet.CommandLine.2.5.0\tools\NuGet.exe"
-	}
+    # change testExecutable as needed, defaults to nunit
+    $testExecutable = "$baseDir\thirdparty\packages\NUnit.Runners.2.6.4\tools\nunit-console.exe"
+	$unitTestAssembly = "$baseDir\buildartifacts\HelloCI.UnitTests.dll"
+	$unitTestResults = "$baseDir\buildartifacts\TestResults.xml"
+}
  
 
 task default -depends Compile
@@ -66,7 +67,7 @@ task StopWebsite {
 # Execute unit tests
 # Change as necessary if using a different test tool
 task UnitTest -depends Compile {
-    exec { & $testExecutable /testcontainer:$unitTestAssembly | Out-Null }
+    exec { & $testExecutable $unitTestAssembly /nologo /nodots /xml=$unitTestResults }
 }
 
 # Package the project web code
