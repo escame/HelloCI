@@ -3,6 +3,10 @@
 
 Framework "4.0"
 
+# ------------------------------------------------------------------------------------#
+# Global variables
+# ------------------------------------------------------------------------------------#
+
 properties {
     # build properties - change as needed
     $baseDir = resolve-path .\
@@ -18,17 +22,25 @@ properties {
 	  }
 
 	$projectName = "HelloCI"
-    $projectConfig = "Release"
+	$projectConfig = "Release"
 	$webSite = "$baseDir\buildartifacts\_PublishedWebsites\HelloCI.Web"
 	$ProcessIIS = "iisexpress"
 
     # tools
     # change testExecutable as needed, defaults to nunit
-    $testExecutable = "$baseDir\thirdparty\packages\NUnit.Runners.2.6.4\tools\nunit-console.exe"
-	$unitTestAssembly = "$baseDir\buildartifacts\HelloCI.UnitTests.dll"
-	$unitTestResults = "$baseDir\buildartifacts\TestResults.xml"
+    $testRunnerExe = resolve-path "$baseDir\thirdparty\packages\NUnit.Runners.*\tools\nunit-console.exe"
+	$testAssembly = "$baseDir\buildartifacts\HelloCI.UnitTests.dll"
+	$testResults = "$baseDir\buildartifacts\TestResults.xml"
+    $coverageExe = resolve-path "$baseDir\thirdparty\packages\OpenCover.*\opencover.console.exe"
+    $coverageResults = "$baseDir\buildartifacts\coverage.xml"
+    $coverageFilter = "+[HelloCI.*]* -[*.Tests]* -[*]*.Annotations.* -[*]*.Dashboard.* -[*]*.Logging.* -[*]*.ExpressionUtil.*"
+	$reportGeneratorExe = resolve-path "$baseDir\thirdparty\packages\ReportGenerator.*\ReportGenerator.exe"
+	$Verbosity = 'Error'
 }
  
+# ------------------------------------------------------------------------------------#
+# task methods
+# ------------------------------------------------------------------------------------#
 
 task default -depends Compile
 
@@ -36,9 +48,10 @@ task default -depends Compile
 task Clean {
     Write-Host "Deleting the buildartifacts directory"
     DeleteDirectory $outDir
+	DeleteFile ".\TestResult.xml"
 }
 
-#  Initialize the build
+# Initialize the build
 task Init -depends Clean {
     Write-Host "Creating the buildartifacts directory"
     CreateDirectory $outDir
@@ -52,12 +65,14 @@ task Compile -depends Init {
 
 # Start Website
 task StartWebsite -depends StopWebsite, Compile {
+    Write-Host "Start WebSite on port: 9999"
     $iisexpress = "$env:ProgramFiles\IIS Express\iisexpress.exe"
     start $iisexpress @("/port:9999 /path:$webSite")  
 }
 
 # Stop Website
 task StopWebsite {
+    Write-Host "Stop WebSite"
     $ProcessIsRunning = Get-Process $ProcessIIS -ErrorAction SilentlyContinue
 	if ($ProcessIsRunning) {
        exec { taskkill  /F /IM ($ProcessIIS + ".exe") }
@@ -67,7 +82,23 @@ task StopWebsite {
 # Execute unit tests
 # Change as necessary if using a different test tool
 task UnitTest -depends Compile {
-    exec { & $testExecutable $unitTestAssembly /nologo /nodots /xml=$unitTestResults }
+    Write-Host "Execute UniTests"
+    exec { & $testRunnerExe $testAssembly /nologo /nodots /xml=$testResults }
+}
+
+# Execute coverage tests
+task CoverageTest -depends Compile {
+    Write-Host "Execute Coverage Test"
+    exec {
+	 & $coverageExe `"-target:$testRunnerExe`" `"-targetargs:$testAssembly /noshadow $extra`" `"-filter:$coverageFilter`" -mergeoutput `"-output:$coverageResults`" -register:user -returntargetcode }
+}
+
+#Execute coverage report
+task CoverageReport -depends CoverageTest {
+   Write-Host "Execute Coverage Report"
+    exec {
+    & $reportGeneratorExe -reports:$coverageResults -targetdir:$outDir `
+          -verbosity:$Verbosity }
 }
 
 # Package the project web code
