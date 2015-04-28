@@ -33,7 +33,7 @@ properties {
 	$testResults = "$baseDir\buildartifacts\TestResults.xml"
     $coverageExe = resolve-path "$baseDir\thirdparty\packages\OpenCover.*\opencover.console.exe"
     $coverageResults = "$baseDir\buildartifacts\coverage.xml"
-    $coverageFilter = "+[HelloCI.*]* -[*.Tests]* -[*]*.Annotations.* -[*]*.Dashboard.* -[*]*.Logging.* -[*]*.ExpressionUtil.*"
+    $coverageFilter = "+[HelloCI.*]*"
 	$reportGeneratorExe = resolve-path "$baseDir\thirdparty\packages\ReportGenerator.*\ReportGenerator.exe"
 	$Verbosity = 'Error'
 }
@@ -97,7 +97,7 @@ task CoverageTest -depends Compile {
 task CoverageReport -depends CoverageTest {
    Write-Host "Execute Coverage Report"
     exec {
-    & $reportGeneratorExe -reports:$coverageResults -targetdir:$outDir `
+    & $reportGeneratorExe -reports:$coverageResults -targetdir:$outDir\coverage `
           -verbosity:$Verbosity }
 }
 
